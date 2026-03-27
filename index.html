@@ -239,7 +239,6 @@ nav {
   transition: border-color .3s;
 }
 .vr-embed:hover { border-color: rgba(200,169,110,.4); }
-.vr-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
 .vr-placeholder {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
@@ -628,8 +627,15 @@ footer {
       <p class="section-body">結合敘事導覽與沉浸式視覺，讓每一位遊客都能在虛擬森林中，找到屬於自己的記憶共鳴。</p>
     </div>
     <div class="vr-embed reveal reveal-delay-2">
-      <!-- 把 VIDEO_ID 換成你的 YouTube ID -->
-      <iframe src="https://www.youtube.com/embed/VIDEO_ID" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <iframe
+        src="https://www.youtube.com/embed/7_rHZ6Jh8RQ?rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+        title="曙森物語 VR 線上展"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"
+        loading="lazy"
+        style="position:absolute;inset:0;width:100%;height:100%;border:none;">
+      </iframe>
     </div>
   </div>
 </div>
