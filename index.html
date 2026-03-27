@@ -7,654 +7,549 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --forest-deep: #1a3d2b;
-    --forest-mid: #2d5a3d;
-    --forest-light: #4a7c5f;
-    --forest-pale: #6b9e7e;
-    --bark-dark: #0f2219;
-    --gold: #c8a96e;
-    --gold-light: #e8c98e;
-    --cream: #f0ebe0;
-    --text-main: #e8e0d0;
-    --text-muted: #a09880;
-  }
+:root {
+  --forest-deep: #1a3d2b;
+  --forest-mid: #2d5a3d;
+  --forest-light: #4a7c5f;
+  --bark-dark: #0f2219;
+  --gold: #c8a96e;
+  --gold-light: #e8c98e;
+  --cream: #f0ebe0;
+  --text-main: #e8e0d0;
+  --text-muted: #a09880;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
-  html { scroll-behavior: smooth; }
+body {
+  background: var(--bark-dark);
+  color: var(--text-main);
+  font-family: 'Noto Serif TC', serif;
+  overflow-x: hidden;
+  cursor: none;
+}
 
-  body {
-    background: var(--bark-dark);
-    color: var(--text-main);
-    font-family: 'Noto Serif TC', serif;
-    overflow-x: hidden;
-    cursor: none;
-  }
+/* ── CURSOR (desktop only) ── */
+.cursor, .cursor-ring {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  border-radius: 50%;
+}
+.cursor {
+  width: 12px; height: 12px;
+  background: var(--gold);
+  transition: width .3s, height .3s;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  width: 40px; height: 40px;
+  border: 1px solid rgba(200,169,110,.5);
+  z-index: 9998;
+  transition: width .3s, height .3s;
+}
+@media (hover: none) { .cursor, .cursor-ring { display: none; } }
 
-  /* Custom cursor */
-  .cursor {
-    position: fixed;
-    width: 12px; height: 12px;
-    background: var(--gold);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
-    mix-blend-mode: difference;
-  }
-  .cursor-ring {
-    position: fixed;
-    width: 40px; height: 40px;
-    border: 1px solid rgba(200,169,110,0.5);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
-  }
+/* Noise */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 1000; opacity: .6;
+}
 
-  /* Noise texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.6;
-  }
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 20px 48px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(to bottom, rgba(15,34,25,.95), transparent);
+  backdrop-filter: blur(2px);
+  transition: background .3s, backdrop-filter .3s;
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; letter-spacing: .3em;
+  color: var(--gold-light); text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  color: var(--text-muted); text-decoration: none;
+  font-size: 12px; letter-spacing: .15em; font-weight: 300;
+  transition: color .3s;
+}
+.nav-links a:hover { color: var(--gold-light); }
 
-  /* Nav */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 24px 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(to bottom, rgba(15,34,25,0.95), transparent);
-    backdrop-filter: blur(2px);
-  }
-  .nav-logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 14px;
-    letter-spacing: 0.3em;
-    color: var(--gold-light);
-    text-transform: uppercase;
-  }
-  .nav-links {
-    display: flex;
-    gap: 40px;
-    list-style: none;
-  }
-  .nav-links a {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 13px;
-    letter-spacing: 0.15em;
-    transition: color 0.3s;
-    font-weight: 300;
-  }
-  .nav-links a:hover { color: var(--gold-light); }
+/* Hamburger (mobile) */
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; padding: 4px;
+}
+.hamburger span {
+  width: 24px; height: 1px;
+  background: var(--gold-light);
+  transition: transform .3s, opacity .3s;
+}
+.mobile-menu {
+  display: none;
+  position: fixed; inset: 0; z-index: 150;
+  background: rgba(15,34,25,.98);
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 32px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  color: var(--cream); text-decoration: none;
+  font-size: 22px; letter-spacing: .2em; font-weight: 300;
+  transition: color .3s;
+}
+.mobile-menu a:hover { color: var(--gold); }
+.mobile-close {
+  position: absolute; top: 24px; right: 24px;
+  font-size: 28px; color: var(--text-muted);
+  cursor: pointer; background: none; border: none;
+  font-family: serif; line-height: 1;
+}
 
-  /* Hero */
-  #hero {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    background: radial-gradient(ellipse at 50% 60%, var(--forest-mid) 0%, var(--bark-dark) 70%);
-  }
+/* ── HERO ── */
+#hero {
+  height: 100dvh; min-height: 600px;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  position: relative; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 60%, var(--forest-mid) 0%, var(--bark-dark) 70%);
+}
+.hero-bg-lines {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, transparent, transparent 60px,
+    rgba(74,124,95,.04) 60px, rgba(74,124,95,.04) 61px);
+}
+/* Logo — real image */
+.hero-emblem {
+  width: 280px; height: 280px;
+  margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 1.2s ease forwards .3s;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-emblem img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 40px rgba(74,124,95,0.35));
+}
 
-  .hero-bg-lines {
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 60px,
-      rgba(74,124,95,0.04) 60px,
-      rgba(74,124,95,0.04) 61px
-    );
-  }
+.hero-title {
+  font-size: clamp(44px, 9vw, 108px);
+  font-weight: 600; letter-spacing: .25em;
+  color: var(--cream); line-height: 1;
+  opacity: 0; animation: fadeUp 1s ease forwards .6s;
+  text-shadow: 0 0 60px rgba(74,124,95,.4);
+  text-align: center;
+}
+.hero-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; letter-spacing: .5em;
+  color: var(--gold); margin-top: 14px;
+  opacity: 0; animation: fadeUp 1s ease forwards .9s;
+  text-transform: uppercase;
+}
+.hero-tagline {
+  font-size: 12px; letter-spacing: .2em;
+  color: var(--text-muted); margin-top: 20px; font-weight: 300;
+  opacity: 0; animation: fadeUp 1s ease forwards 1.2s;
+  text-align: center; padding: 0 24px;
+}
+.hero-scroll {
+  position: absolute; bottom: 36px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  opacity: 0; animation: fadeUp 1s ease forwards 1.8s;
+}
+.hero-scroll span { font-size: 10px; letter-spacing: .3em; color: var(--text-muted); }
+.scroll-line {
+  width: 1px; height: 52px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
 
-  .hero-emblem {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 40px;
-    position: relative;
-    opacity: 0;
-    animation: fadeUp 1.2s ease forwards 0.3s;
-  }
+/* ── SHARED SECTION STYLES ── */
+.section-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px; letter-spacing: .5em;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 18px; opacity: .8;
+}
+.section-title {
+  font-size: clamp(26px, 4vw, 46px);
+  font-weight: 400; letter-spacing: .15em;
+  color: var(--cream); margin-bottom: 14px; line-height: 1.3;
+}
+.section-body {
+  font-size: 15px; line-height: 2.2;
+  color: var(--text-muted); font-weight: 300; max-width: 660px;
+}
+.gold-line { width: 40px; height: 1px; background: var(--gold); margin-bottom: 24px; opacity: .6; }
+.section-divider { width: 60px; height: 1px; background: var(--gold); margin: 0 auto 32px; opacity: .6; }
 
-  /* SVG Logo recreation */
-  .emblem-svg { width: 100%; height: 100%; }
+/* ── INTRO ── */
+#intro {
+  padding: 130px 60px;
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 90px; align-items: center;
+}
+.intro-img-wrap {
+  aspect-ratio: 3/4;
+  background: var(--forest-deep);
+  border: 1px solid rgba(200,169,110,.2);
+  overflow: hidden; position: relative;
+  transition: border-color .3s;
+}
+.intro-img-wrap:hover { border-color: rgba(200,169,110,.5); }
+.intro-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.intro-img-wrap .ph {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+}
+.intro-img-wrap .ph svg { width: 40px; height: 40px; opacity: .25; color: var(--gold); }
+.intro-img-wrap .ph span {
+  font-size: 10px; letter-spacing: .3em;
+  color: var(--text-muted); opacity: .4; text-align: center; padding: 0 20px;
+}
 
-  .hero-title {
-    font-size: clamp(52px, 8vw, 96px);
-    font-weight: 600;
-    letter-spacing: 0.25em;
-    color: var(--cream);
-    line-height: 1;
-    opacity: 0;
-    animation: fadeUp 1s ease forwards 0.6s;
-    text-shadow: 0 0 60px rgba(74,124,95,0.4);
-  }
-  .hero-subtitle {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 18px;
-    letter-spacing: 0.5em;
-    color: var(--gold);
-    margin-top: 16px;
-    opacity: 0;
-    animation: fadeUp 1s ease forwards 0.9s;
-    text-transform: uppercase;
-  }
-  .hero-tagline {
-    font-size: 13px;
-    letter-spacing: 0.2em;
-    color: var(--text-muted);
-    margin-top: 24px;
-    font-weight: 300;
-    opacity: 0;
-    animation: fadeUp 1s ease forwards 1.2s;
-  }
-  .hero-scroll {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    opacity: 0;
-    animation: fadeUp 1s ease forwards 1.8s;
-  }
-  .hero-scroll span {
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-  }
-  .scroll-line {
-    width: 1px;
-    height: 60px;
-    background: linear-gradient(to bottom, var(--gold), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
+/* ── VR ── */
+#vr {
+  background: linear-gradient(135deg, var(--forest-deep) 0%, var(--bark-dark) 100%);
+  border-top: 1px solid rgba(200,169,110,.15);
+  border-bottom: 1px solid rgba(200,169,110,.15);
+}
+.vr-inner {
+  max-width: 1200px; margin: 0 auto;
+  padding: 120px 60px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+}
+.vr-embed {
+  aspect-ratio: 16/9;
+  background: var(--bark-dark);
+  border: 1px solid rgba(200,169,110,.2);
+  position: relative; overflow: hidden;
+  transition: border-color .3s;
+}
+.vr-embed:hover { border-color: rgba(200,169,110,.4); }
+.vr-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.vr-placeholder {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+}
+.vr-play-btn {
+  width: 60px; height: 60px;
+  border: 2px solid rgba(200,169,110,.4); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.vr-play-btn::after { content:'▶'; font-size:18px; color:var(--gold); margin-left:4px; }
 
-  /* Divider */
-  .section-divider {
-    width: 60px;
-    height: 1px;
-    background: var(--gold);
-    margin: 0 auto 32px;
-    opacity: 0.6;
-  }
+/* ── TREES ── */
+#trees { padding: 130px 60px; max-width: 1200px; margin: 0 auto; }
+.trees-header { text-align: center; margin-bottom: 72px; }
 
-  /* Section base */
-  section {
-    padding: 120px 60px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .section-label {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 11px;
-    letter-spacing: 0.5em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    opacity: 0.8;
-  }
-  .section-title {
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 400;
-    letter-spacing: 0.15em;
-    color: var(--cream);
-    margin-bottom: 16px;
-    line-height: 1.3;
-  }
-  .section-body {
-    font-size: 15px;
-    line-height: 2.2;
-    color: var(--text-muted);
-    font-weight: 300;
-    max-width: 680px;
-  }
+.trees-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  align-items: start;
+}
+.tree-card {
+  background: var(--forest-deep);
+  padding: 40px 32px 36px;
+  position: relative; overflow: hidden;
+  cursor: pointer;
+  transition: background .4s, transform .3s;
+}
+.tree-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, rgba(74,124,95,.18) 0%, transparent 70%);
+  opacity: 0; transition: opacity .4s;
+}
+.tree-card:hover { background: var(--forest-mid); transform: translateY(-3px); }
+.tree-card:hover::before { opacity: 1; }
+.tree-card-image {
+  width: 100%;
+  height: 260px;
+  background: var(--bark-dark);
+  border: 1px solid rgba(200,169,110,.1);
+  margin-bottom: 24px; overflow: hidden;
+  position: relative; transition: border-color .3s;
+}
+.tree-card:hover .tree-card-image { border-color: rgba(200,169,110,.35); }
+.tree-card-image img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center center;
+  display: block;
+}
+.tree-card-image .img-ph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; letter-spacing: .25em;
+  color: var(--text-muted); opacity: .35; text-align: center; padding: 16px;
+}
+.tree-number { font-family:'Cormorant Garamond',serif; font-size:10px; letter-spacing:.4em; color:var(--gold); opacity:.7; margin-bottom:6px; }
+.tree-name-zh { font-size:20px; font-weight:600; letter-spacing:.1em; color:var(--cream); margin-bottom:4px; }
+.tree-name-symbol { font-size:12px; letter-spacing:.2em; color:var(--text-muted); margin-bottom:14px; }
+.tree-desc { font-size:13px; line-height:2; color:var(--text-muted); font-weight:300; }
 
-  /* About / Project Intro */
-  #intro {
-    padding: 140px 60px;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 100px;
-    align-items: center;
-  }
-  .intro-image-placeholder {
-    aspect-ratio: 3/4;
-    background: var(--forest-deep);
-    border: 1px solid rgba(200,169,110,0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-  .intro-image-placeholder::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, rgba(74,124,95,0.1) 0%, transparent 70%);
-  }
-  .intro-image-placeholder:hover {
-    border-color: rgba(200,169,110,0.5);
-  }
-  .placeholder-icon {
-    width: 48px; height: 48px;
-    opacity: 0.3;
-    color: var(--gold);
-  }
-  .placeholder-text {
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    color: var(--text-muted);
-    opacity: 0.5;
-    text-align: center;
-    padding: 0 20px;
-  }
-  /* Image slot — replace placeholder */
-  .img-slot {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    position: absolute;
-    inset: 0;
-  }
+/* Read more hint */
+.tree-read-more {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px; letter-spacing: .35em;
+  color: var(--gold); opacity: .6;
+  text-transform: uppercase; transition: opacity .3s;
+}
+.tree-card:hover .tree-read-more { opacity: 1; }
+.tree-read-more::after { content: '→'; font-size: 14px; }
 
-  /* VR Section */
-  #vr {
-    background: linear-gradient(135deg, var(--forest-deep) 0%, var(--bark-dark) 100%);
-    padding: 0;
-    max-width: 100%;
-    margin: 0;
-    border-top: 1px solid rgba(200,169,110,0.15);
-    border-bottom: 1px solid rgba(200,169,110,0.15);
-  }
-  .vr-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 120px 60px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-  }
-  .vr-embed {
-    aspect-ratio: 16/9;
-    background: var(--bark-dark);
-    border: 1px solid rgba(200,169,110,0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-  .vr-embed:hover { border-color: rgba(200,169,110,0.5); }
-  .vr-embed::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, rgba(74,124,95,0.08) 0%, transparent 70%);
-  }
-  .vr-icon {
-    width: 64px; height: 64px;
-    border: 2px solid rgba(200,169,110,0.4);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    display: none;
-  }
-  .vr-icon::after {
-    content: '▶';
-    font-size: 20px;
-    color: var(--gold);
-    margin-left: 4px;
-  }
-  .vr-label {
-    font-size: 11px;
-    letter-spacing: 0.4em;
-    color: var(--text-muted);
-    position: relative;
-    display: none;
-  }
-  /* actual iframe */
-  .vr-embed iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    z-index: 2;
-  }
+/* ── PRODUCTS ── */
+#products {
+  background: var(--forest-deep);
+  border-top: 1px solid rgba(200,169,110,.15);
+}
+.products-inner { max-width: 1200px; margin: 0 auto; padding: 120px 60px; }
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px; margin-top: 56px;
+}
+/* Featured first card spans full width */
+.product-card {
+  background: var(--bark-dark);
+  border: 1px solid rgba(200,169,110,.12);
+  overflow: hidden; cursor: pointer;
+  transition: border-color .4s, transform .3s;
+  display: flex; flex-direction: column;
+}
+.product-card:hover { border-color: rgba(200,169,110,.4); transform: translateY(-3px); }
+.product-img {
+  aspect-ratio: 4/3; overflow: hidden;
+  background: rgba(255,255,255,.03); position: relative;
+}
+.product-img img { width:100%; height:100%; object-fit:cover; display:block; transition: transform .6s ease; }
+.product-card:hover .product-img img { transform: scale(1.04); }
+.product-img .img-ph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; letter-spacing: .3em;
+  color: var(--text-muted); opacity: .3;
+}
+.product-info { padding: 28px 32px 32px; flex: 1; }
+.product-tag { font-family:'Cormorant Garamond',serif; font-size:10px; letter-spacing:.5em; color:var(--gold); margin-bottom:10px; }
+.product-name { font-size:18px; font-weight:600; letter-spacing:.1em; color:var(--cream); margin-bottom:10px; }
+.product-desc { font-size:13px; line-height:2; color:var(--text-muted); font-weight:300; }
+.product-read-more {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px; letter-spacing: .35em;
+  color: var(--gold); opacity: .5; text-transform: uppercase;
+  transition: opacity .3s;
+}
+.product-card:hover .product-read-more { opacity: 1; }
+.product-read-more::after { content: '→'; font-size: 14px; }
 
-  /* Six Trees Grid */
-  #trees {
-    padding: 140px 60px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .trees-header {
-    text-align: center;
-    margin-bottom: 80px;
-  }
-  .trees-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-  }
-  .tree-card {
-    background: var(--forest-deep);
-    padding: 48px 36px;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.4s;
-    cursor: default;
-  }
-  .tree-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 100%, rgba(74,124,95,0.15) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-  .tree-card:hover { background: var(--forest-mid); }
-  .tree-card:hover::before { opacity: 1; }
-  .tree-card-image {
-    width: 100%;
-    aspect-ratio: 3/4;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(200,169,110,0.1);
-    margin-bottom: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-  .tree-card:hover .tree-card-image { border-color: rgba(200,169,110,0.3); }
-  .tree-card-image img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
-  .tree-card-image .img-placeholder-text {
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    color: var(--text-muted);
-    opacity: 0.4;
-    text-align: center;
-    padding: 20px;
-  }
-  .tree-number {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 11px;
-    letter-spacing: 0.4em;
-    color: var(--gold);
-    opacity: 0.7;
-    margin-bottom: 8px;
-  }
-  .tree-name-zh {
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--cream);
-    margin-bottom: 4px;
-  }
-  .tree-name-symbol {
-    font-size: 13px;
-    letter-spacing: 0.2em;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-  }
-  .tree-desc {
-    font-size: 13px;
-    line-height: 2;
-    color: var(--text-muted);
-    font-weight: 300;
-  }
+/* ── TEAM ── */
+#team { padding: 130px 60px; max-width: 1200px; margin: 0 auto; text-align: center; }
+.team-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 20px; margin-top: 56px;
+}
+.team-member { display:flex; flex-direction:column; align-items:center; gap:12px; }
+.team-avatar {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: var(--forest-deep);
+  border: 1px solid rgba(200,169,110,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--gold); font-weight:300;
+  transition: border-color .3s, background .3s;
+}
+.team-avatar:hover { border-color: rgba(200,169,110,.5); background: var(--forest-mid); }
+.team-role { font-family:'Cormorant Garamond',serif; font-size:10px; letter-spacing:.4em; color:var(--gold); }
+.team-name { font-size:14px; font-weight:600; letter-spacing:.1em; color:var(--cream); }
+.team-id { font-size:11px; color:var(--text-muted); font-weight:300; font-family:monospace; }
 
-  /* Products */
-  #products {
-    padding: 0;
-    max-width: 100%;
-    background: var(--forest-deep);
-    border-top: 1px solid rgba(200,169,110,0.15);
-  }
-  .products-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 120px 60px;
-  }
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px;
-    margin-top: 60px;
-  }
-  .product-card {
-    position: relative;
-    overflow: hidden;
-    background: var(--bark-dark);
-    border: 1px solid rgba(200,169,110,0.15);
-    transition: border-color 0.4s, transform 0.4s;
-  }
-  .product-card:hover {
-    border-color: rgba(200,169,110,0.4);
-    transform: translateY(-4px);
-  }
-  .product-img {
-    aspect-ratio: 4/3;
-    background: rgba(255,255,255,0.03);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .product-img img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
-  .product-img .img-placeholder-text {
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    color: var(--text-muted);
-    opacity: 0.35;
-  }
-  .product-info {
-    padding: 32px;
-  }
-  .product-tag {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 10px;
-    letter-spacing: 0.5em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .product-name {
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--cream);
-    margin-bottom: 12px;
-  }
-  .product-desc {
-    font-size: 13px;
-    line-height: 2;
-    color: var(--text-muted);
-    font-weight: 300;
-  }
+/* ── INSTAGRAM / QR ── */
+#social {
+  border-top: 1px solid rgba(200,169,110,.15);
+  background: linear-gradient(135deg, var(--bark-dark) 0%, var(--forest-deep) 100%);
+}
+.social-inner {
+  max-width: 1200px; margin: 0 auto;
+  padding: 100px 60px;
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 60px; align-items: center;
+}
+.social-text .section-title { font-size: clamp(22px,3vw,36px); }
+.social-text .section-body { font-size: 14px; }
+.social-qr {
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+.qr-frame {
+  width: 180px; height: 180px;
+  background: white;
+  padding: 12px;
+  border: 1px solid rgba(200,169,110,.3);
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.qr-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.qr-handle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; letter-spacing: .35em;
+  color: var(--gold); text-transform: uppercase;
+}
+.social-divider-line {
+  width: 1px; height: 120px;
+  background: linear-gradient(to bottom, transparent, rgba(200,169,110,.4), transparent);
+  margin: 0 auto;
+}
+.ig-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-top: 20px; padding: 12px 24px;
+  border: 1px solid rgba(200,169,110,.3);
+  color: var(--gold); text-decoration: none;
+  font-size: 12px; letter-spacing: .3em;
+  transition: background .3s, border-color .3s;
+  cursor: pointer;
+}
+.ig-link:hover { background: rgba(200,169,110,.1); border-color: var(--gold); }
 
-  /* Team */
-  #team {
-    padding: 140px 60px;
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-  }
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 24px;
-    margin-top: 60px;
-  }
-  .team-member {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
-  .team-avatar {
-    width: 80px; height: 80px;
-    border-radius: 50%;
-    background: var(--forest-deep);
-    border: 1px solid rgba(200,169,110,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: var(--gold);
-    font-weight: 300;
-    transition: border-color 0.3s, background 0.3s;
-    overflow: hidden;
-    position: relative;
-  }
-  .team-avatar img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    position: absolute;
-    inset: 0;
-  }
-  .team-avatar:hover {
-    border-color: rgba(200,169,110,0.5);
-    background: var(--forest-mid);
-  }
-  .team-role {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 10px;
-    letter-spacing: 0.4em;
-    color: var(--gold);
-    text-transform: uppercase;
-  }
-  .team-name {
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--cream);
-  }
-  .team-id {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 300;
-    font-family: monospace;
-  }
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid rgba(200,169,110,.15);
+  padding: 52px 60px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-brand { font-size: 20px; font-weight:600; letter-spacing:.2em; color:var(--cream); }
+.footer-sub { font-family:'Cormorant Garamond',serif; font-size:11px; letter-spacing:.4em; color:var(--gold); margin-top:6px; }
+.footer-right { text-align:right; font-size:12px; color:var(--text-muted); line-height:2; font-weight:300; }
 
-  /* Footer */
-  footer {
-    border-top: 1px solid rgba(200,169,110,0.15);
-    padding: 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 100%;
-  }
-  .footer-left .footer-brand {
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    color: var(--cream);
-  }
-  .footer-left .footer-sub {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 11px;
-    letter-spacing: 0.4em;
-    color: var(--gold);
-    margin-top: 6px;
-    text-transform: uppercase;
-  }
-  .footer-right {
-    text-align: right;
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 2;
-    font-weight: 300;
-  }
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(10,22,16,.92);
+  backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s ease;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--forest-deep);
+  border: 1px solid rgba(200,169,110,.25);
+  max-width: 900px; width: 100%;
+  max-height: 90vh; overflow-y: auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  transform: translateY(24px); transition: transform .4s ease;
+  position: relative;
+}
+.modal-overlay.open .modal-box { transform: translateY(0); }
+.modal-img {
+  aspect-ratio: 3/4; overflow: hidden;
+  background: var(--bark-dark);
+  position: relative;
+}
+.modal-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.modal-img .img-ph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; letter-spacing:.3em;
+  color: var(--text-muted); opacity:.3;
+}
+.modal-content { padding: 48px 40px; overflow-y: auto; }
+.modal-close {
+  position: absolute; top: 16px; right: 20px;
+  background: none; border: none;
+  color: var(--text-muted); font-size: 24px;
+  cursor: pointer; line-height: 1; z-index: 10;
+  transition: color .3s;
+}
+.modal-close:hover { color: var(--gold); }
+.modal-number { font-family:'Cormorant Garamond',serif; font-size:11px; letter-spacing:.45em; color:var(--gold); opacity:.7; margin-bottom:10px; }
+.modal-title { font-size:28px; font-weight:600; letter-spacing:.1em; color:var(--cream); margin-bottom:6px; }
+.modal-en { font-family:'Cormorant Garamond',serif; font-size:14px; letter-spacing:.25em; color:var(--text-muted); margin-bottom:24px; font-style:italic; }
+.modal-divider { width:36px; height:1px; background:var(--gold); opacity:.5; margin-bottom:24px; }
+.modal-body { font-size:14px; line-height:2.2; color:var(--text-muted); font-weight:300; }
+.modal-body p + p { margin-top: 16px; }
 
-  /* Animations */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.4; transform: scaleY(1); }
-    50% { opacity: 1; transform: scaleY(1.1); }
-  }
+/* product modal: image landscape */
+.modal-box.product-modal { grid-template-columns: 1fr; }
+.modal-box.product-modal .modal-img { aspect-ratio: 16/9; }
 
-  /* Scroll reveal */
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
-  .reveal-delay-4 { transition-delay: 0.4s; }
-  .reveal-delay-5 { transition-delay: 0.5s; }
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(28px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes scrollPulse {
+  0%,100% { opacity:.4; } 50% { opacity:1; }
+}
+.reveal { opacity:0; transform:translateY(36px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+.reveal-delay-1 { transition-delay:.1s; }
+.reveal-delay-2 { transition-delay:.2s; }
+.reveal-delay-3 { transition-delay:.3s; }
+.reveal-delay-4 { transition-delay:.4s; }
+.reveal-delay-5 { transition-delay:.5s; }
 
-  /* Gold line accent */
-  .gold-line {
-    width: 40px;
-    height: 1px;
-    background: var(--gold);
-    margin-bottom: 24px;
-    opacity: 0.6;
-  }
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  body { cursor: auto; }
 
-  /* Responsive */
-  @media (max-width: 900px) {
-    nav { padding: 20px 24px; }
-    section, #intro, .vr-inner, .products-inner, #trees, #team { padding: 80px 24px; }
-    #intro, .vr-inner { grid-template-columns: 1fr; gap: 40px; }
-    .trees-grid { grid-template-columns: repeat(2, 1fr); }
-    .products-grid { grid-template-columns: 1fr; }
-    .team-grid { grid-template-columns: repeat(3, 1fr); }
-    footer { flex-direction: column; gap: 24px; text-align: center; padding: 40px 24px; }
-    .footer-right { text-align: center; }
-  }
+  nav { padding: 16px 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  #intro { grid-template-columns:1fr; gap:40px; padding:100px 24px; }
+  .intro-img-wrap { aspect-ratio: 4/3; max-height: 320px; }
+
+  .vr-inner { grid-template-columns:1fr; gap:40px; padding:80px 24px; }
+
+  #trees { padding: 80px 20px; }
+  .trees-grid { grid-template-columns: repeat(2,1fr); gap:2px; }
+  .tree-card:nth-child(even) { margin-top: 0; }
+  .tree-card { padding:28px 20px; }
+
+  .products-inner { padding: 80px 20px; }
+  .products-grid { grid-template-columns:1fr; }
+
+  #team { padding: 80px 20px; }
+  .team-grid { grid-template-columns: repeat(3,1fr); gap:16px; }
+
+  .social-inner { grid-template-columns:1fr; gap:40px; padding:80px 24px; text-align:center; }
+  .social-divider-line { display:none; }
+  .social-text .section-body { margin: 0 auto; }
+  .social-text .gold-line { margin: 0 auto 24px; }
+
+  footer { flex-direction:column; gap:20px; text-align:center; padding:40px 24px; }
+  .footer-right { text-align:center; }
+
+  .modal-box { grid-template-columns:1fr; max-height:85vh; }
+  .modal-img { aspect-ratio: 4/3; max-height:240px; }
+  .modal-content { padding: 32px 24px 40px; }
+  .modal-box.product-modal .modal-img { aspect-ratio: 4/3; max-height:220px; }
+}
+
+@media (max-width: 480px) {
+  .hero-emblem { width:180px; height:180px; }
+  .trees-grid { grid-template-columns: 1fr; }
+  .team-grid { grid-template-columns: repeat(2,1fr); }
+}
 </style>
 </head>
 <body>
@@ -662,8 +557,19 @@
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
-<!-- Navigation -->
-<nav>
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="#intro" onclick="closeMobileMenu()">主題介紹</a>
+  <a href="#vr" onclick="closeMobileMenu()">VR 線上展</a>
+  <a href="#trees" onclick="closeMobileMenu()">六樹神祇</a>
+  <a href="#products" onclick="closeMobileMenu()">設計成果</a>
+  <a href="#team" onclick="closeMobileMenu()">製作團隊</a>
+  <a href="#social" onclick="closeMobileMenu()">追蹤我們</a>
+</div>
+
+<!-- Nav -->
+<nav id="mainNav">
   <div class="nav-logo">曙森物語 · TREEASURE</div>
   <ul class="nav-links">
     <li><a href="#intro">主題介紹</a></li>
@@ -671,157 +577,125 @@
     <li><a href="#trees">六樹神祇</a></li>
     <li><a href="#products">設計成果</a></li>
     <li><a href="#team">製作團隊</a></li>
+    <li><a href="#social">追蹤我們</a></li>
   </ul>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
 </nav>
 
 <!-- Hero -->
 <div id="hero">
   <div class="hero-bg-lines"></div>
-
   <div class="hero-emblem">
-    <img src="logo1.png" alt="曙森物語 Logo" style="width:100%;height:100%;object-fit:contain">
+    <img src="logo1.png" alt="曙森物語 TREEASURE Logo">
   </div>
-
   <h1 class="hero-title">曙森物語</h1>
   <div class="hero-subtitle">TREEASURE</div>
   <p class="hero-tagline">視覺傳達設計系 · 114學年度 · 第29屆畢業製作</p>
-
   <div class="hero-scroll">
     <span>向下探索</span>
     <div class="scroll-line"></div>
   </div>
 </div>
 
-<!-- Intro / Theme -->
+<!-- Intro -->
 <div id="intro">
-  <div class="intro-image-placeholder reveal">
-    <img class="img-slot" src="你的圖片路徑.jpg" alt="曙森物語主視覺" style="display:block;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+  <div class="intro-img-wrap reveal">
+    <img src="你的圖片路徑.jpg" alt="曙森物語主視覺">
   </div>
-  <div class="intro-text reveal reveal-delay-2">
+  <div class="reveal reveal-delay-2">
     <div class="section-label">壹 · 主題介紹</div>
     <h2 class="section-title">以老樹為脈絡，<br>構築可閱讀的森林敘事</h2>
     <div class="gold-line"></div>
-    <p class="section-body">
-      文淵老樹園區位於台灣中部埔里，原址為砂石開採場，地貌破碎、生態中斷。園主持續搶救因工程開發而被移除的老樹，移植至谷地重生。
-    </p>
+    <p class="section-body">文淵老樹園區位於台灣中部埔里，原址為砂石開採場，地貌破碎、生態中斷。園主持續搶救因工程開發而被移除的老樹，移植至谷地重生。</p>
     <br>
-    <p class="section-body">
-      《曙森物語》以六棵代表性老樹為核心，建立可獨立閱讀的敘事系統，透過「神話轉譯」將樹木生態特徵與時間痕跡轉化為六種生命象徵——方向、記憶、界線、重逢、守護、修復。
-    </p>
+    <p class="section-body">《曙森物語》以六棵代表性老樹為核心，建立可獨立閱讀的敘事系統，透過「神話轉譯」將樹木生態特徵與時間痕跡轉化為六種生命象徵——方向、記憶、界線、重逢、守護、修復。</p>
     <br>
-    <p class="section-body">
-      在體驗層面，本計畫以天然香材與園區修剪枝葉導入塔香與擴香，讓森林氣味成為延續場域記憶的媒介。
-    </p>
+    <p class="section-body">在體驗層面，本計畫以天然香材與園區修剪枝葉導入塔香與擴香，讓森林氣味成為延續場域記憶的媒介。</p>
   </div>
 </div>
 
-<!-- VR Section -->
+<!-- VR -->
 <div id="vr">
   <div class="vr-inner">
     <div class="reveal">
       <div class="section-label">貳 · VR 線上展</div>
       <h2 class="section-title">沉浸式<br>虛擬實境展覽</h2>
       <div class="gold-line"></div>
-      <p class="section-body">
-        透過 VR 線上展覽，讓觀眾得以在沒有時間與空間限制的情況下，進入文淵老樹園區，親身感受六棵老樹的生命力與場域氛圍。
-      </p>
+      <p class="section-body">透過 VR 線上展覽，讓觀眾得以在沒有時間與空間限制的情況下，進入文淵老樹園區，親身感受六棵老樹的生命力與場域氛圍。</p>
       <br>
-      <p class="section-body">
-        結合敘事導覽與沉浸式視覺，讓每一位遊客都能在虛擬森林中，找到屬於自己的記憶共鳴。
-      </p>
+      <p class="section-body">結合敘事導覽與沉浸式視覺，讓每一位遊客都能在虛擬森林中，找到屬於自己的記憶共鳴。</p>
     </div>
     <div class="vr-embed reveal reveal-delay-2">
-      <!--
-        【放置 VR 影片】
-        方法1：YouTube embed — 取消下方 iframe 的 display:none，把 VIDEO_ID 換成實際 YouTube ID
-        方法2：直接放 <video> tag
-      -->
-      <iframe
-        src="https://www.youtube.com/embed/7_rHZ6Jh8RQ"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
-      </iframe>
+      <!-- 把 VIDEO_ID 換成你的 YouTube ID -->
+      <iframe src="https://www.youtube.com/embed/VIDEO_ID" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
   </div>
 </div>
 
-<!-- Six Trees -->
+<!-- Trees -->
 <div id="trees">
   <div class="trees-header reveal">
     <div class="section-label">參 · 六樹神祇</div>
     <h2 class="section-title">六棵老樹 · 六種象徵</h2>
     <div class="section-divider"></div>
-    <p class="section-body" style="margin: 0 auto; text-align: center;">
-      以神話轉譯的方式，將真實的老樹特徵與情感記憶，轉化為可被理解與記憶的象徵角色。
-    </p>
+    <p class="section-body" style="margin:0 auto;text-align:center;">以神話轉譯的方式，將真實的老樹特徵與情感記憶，轉化為可被理解與記憶的象徵角色。</p>
   </div>
   <div class="trees-grid">
 
-    <!-- Tree 1 -->
-    <div class="tree-card reveal reveal-delay-1">
-      <div class="tree-card-image">
-        <!-- 【放置圖片】把 display:none 刪掉，改 src -->
-        <img src="tree1.jpg" alt="五葉松">
-      </div>
+    <div class="tree-card reveal reveal-delay-1" onclick="openModal('tree',0)">
+      <div class="tree-card-image"><img src="tree1.jpg" alt="五葉松"><div class="img-ph">五葉松</div></div>
       <div class="tree-number">NO.01 · 五葉松</div>
       <div class="tree-name-zh">方向與守望</div>
       <div class="tree-name-symbol">Direction & Vision</div>
-      <p class="tree-desc">以向上分岔的線條表現五葉松挺直生長、迎風而立的姿態，如同指引方向的標記，象徵在山林中「被看見、被守望」。</p>
+      <p class="tree-desc">以向上分岔的線條表現五葉松挺直生長、迎風而立的姿態，如同指引方向的標記。</p>
+      <span class="tree-read-more">閱讀更多</span>
     </div>
 
-    <!-- Tree 2 -->
-    <div class="tree-card reveal reveal-delay-2">
-      <div class="tree-card-image">
-        <img src="tree2.jpg" alt="樟樹">
-      </div>
+    <div class="tree-card reveal reveal-delay-2" onclick="openModal('tree',1)">
+      <div class="tree-card-image"><img src="tree2.jpg" alt="樟樹"><div class="img-ph">樟樹</div></div>
       <div class="tree-number">NO.02 · 樟樹</div>
       <div class="tree-name-zh">記憶與時間</div>
       <div class="tree-name-symbol">Memory & Time</div>
-      <p class="tree-desc">以圓弧包覆的繁複線條構成，表現樟樹濃密而富包容性的氣味記憶，如同層層堆疊的時間。</p>
+      <p class="tree-desc">以圓弧包覆的繁複線條構成，表現樟樹濃密而富包容性的氣味記憶。</p>
+      <span class="tree-read-more">閱讀更多</span>
     </div>
 
-    <!-- Tree 3 -->
-    <div class="tree-card reveal reveal-delay-3">
-      <div class="tree-card-image">
-        <img src="tree3.jpg" alt="九芎">
-      </div>
+    <div class="tree-card reveal reveal-delay-3" onclick="openModal('tree',2)">
+      <div class="tree-card-image"><img src="tree3.jpg" alt="九芎"><div class="img-ph">九芎</div></div>
       <div class="tree-number">NO.03 · 九芎</div>
       <div class="tree-name-zh">界線與自我</div>
       <div class="tree-name-symbol">Boundary & Self</div>
-      <p class="tree-desc">運用對稱但位不相交的線條，呈現九芎樹皮光滑、不易攀附的特性，符號中保留明確間距，形成「柔軟的界線」。</p>
+      <p class="tree-desc">運用對稱但不相交的線條，呈現九芎樹皮光滑、不易攀附的特性。</p>
+      <span class="tree-read-more">閱讀更多</span>
     </div>
 
-    <!-- Tree 4 -->
-    <div class="tree-card reveal reveal-delay-1">
-      <div class="tree-card-image">
-        <img src="tree4.jpg" alt="黃連木">
-      </div>
+    <div class="tree-card reveal reveal-delay-1" onclick="openModal('tree',3)">
+      <div class="tree-card-image"><img src="tree4.jpg" alt="黃連木"><div class="img-ph">黃連木</div></div>
       <div class="tree-number">NO.04 · 黃連木</div>
       <div class="tree-name-zh">治癒與痕跡</div>
       <div class="tree-name-symbol">Healing & Trace</div>
-      <p class="tree-desc">以層實的中軸線與向外延伸的枝條，表現樹形整整如支撐結構的穩定性，讓「受傷」成為結構的一部分。</p>
+      <p class="tree-desc">以層實的中軸線與向外延伸的枝條，讓「受傷」成為結構的一部分。</p>
+      <span class="tree-read-more">閱讀更多</span>
     </div>
 
-    <!-- Tree 5 -->
-    <div class="tree-card reveal reveal-delay-2">
-      <div class="tree-card-image">
-        <img src="tree5.jpg" alt="茄苳">
-      </div>
+    <div class="tree-card reveal reveal-delay-2" onclick="openModal('tree',4)">
+      <div class="tree-card-image"><img src="tree5.jpg" alt="茄苳"><div class="img-ph">茄苳</div></div>
       <div class="tree-number">NO.05 · 茄苳</div>
       <div class="tree-name-zh">守護與土地</div>
       <div class="tree-name-symbol">Protection & Earth</div>
-      <p class="tree-desc">以茄苳外擴的根條，表現茄苳作為土地守護樹的穩定性，整體造型如支撐結構，給人「站得住」的視覺感受。</p>
+      <p class="tree-desc">以茄苳外擴的根條，表現作為土地守護樹的穩定性，給人「站得住」的視覺感受。</p>
+      <span class="tree-read-more">閱讀更多</span>
     </div>
 
-    <!-- Tree 6 -->
-    <div class="tree-card reveal reveal-delay-3">
-      <div class="tree-card-image">
-        <img src="tree6.jpg" alt="桃實百日青">
-      </div>
+    <div class="tree-card reveal reveal-delay-3" onclick="openModal('tree',5)">
+      <div class="tree-card-image"><img src="tree6.jpg" alt="桃實百日青"><div class="img-ph">桃實百日青</div></div>
       <div class="tree-number">NO.06 · 桃實百日青</div>
       <div class="tree-name-zh">重逢與連結</div>
       <div class="tree-name-symbol">Reunion & Bond</div>
-      <p class="tree-desc">以兩條向內凹曲的線條構成，似兩棵樹相互擁抱，象徵兩棵移植樹根的生命交纏，形似花苞，亦似擁抱。</p>
+      <p class="tree-desc">以兩條向內凹曲的線條構成，似兩棵樹相互擁抱，象徵移植樹根的生命交纏。</p>
+      <span class="tree-read-more">閱讀更多</span>
     </div>
 
   </div>
@@ -838,47 +712,43 @@
     </div>
     <div class="products-grid">
 
-      <div class="product-card reveal reveal-delay-1">
-        <div class="product-img">
-          <img src="product1.jpg" alt="導覽手冊">
-        </div>
+      <div class="product-card reveal reveal-delay-1" onclick="openModal('product',0)">
+        <div class="product-img"><img src="product1.jpg" alt="導覽手冊"><div class="img-ph">導覽手冊</div></div>
         <div class="product-info">
           <div class="product-tag">Brand Publication</div>
           <div class="product-name">園區導覽手冊</div>
           <p class="product-desc">整合園區背景介紹、老樹故事與六樹神祇象徵概念，使遊客在無導覽人員的情況下，仍能透過閱讀與圖像理解園區故事。</p>
+          <span class="product-read-more">閱讀更多</span>
         </div>
       </div>
 
-      <div class="product-card reveal reveal-delay-2">
-        <div class="product-img">
-          <img src="product2.png" alt="塔香禮盒" style="object-fit:cover; transform:scale(1.3); transform-origin:center;">
-        </div>
+      <div class="product-card reveal reveal-delay-2" onclick="openModal('product',1)">
+        <div class="product-img"><img src="product2.png" alt="塔香禮盒" style="object-fit:cover;transform:scale(1.3);transform-origin:center;"><div class="img-ph">塔香禮盒</div></div>
         <div class="product-info">
           <div class="product-tag">Sensory Product</div>
           <div class="product-name">塔香產品禮盒</div>
           <p class="product-desc">六款對應六樹神祇意涵的塔香設計，將場域故事轉化為感官體驗媒介，使遊客在離場後仍能透過氣味喚起參訪記憶。</p>
+          <span class="product-read-more">閱讀更多</span>
         </div>
       </div>
 
-      <div class="product-card reveal reveal-delay-3">
-        <div class="product-img">
-          <img src="product3.png" alt="擴香包裝" style="object-fit:cover; transform:scale(1.1); transform-origin:center;">
-        </div>
+      <div class="product-card reveal reveal-delay-3" onclick="openModal('product',2)">
+        <div class="product-img"><img src="product3.png" alt="擴香包裝" style="object-fit:cover;transform:scale(1.1);transform-origin:center;"><div class="img-ph">擴香包裝</div></div>
         <div class="product-info">
           <div class="product-tag">Packaging Design</div>
           <div class="product-name">擴香包裝設計</div>
           <p class="product-desc">包裝視覺延續品牌識別與六樹神祇角色形象，將樹神角色與植物元素融入包裝設計，形成一致的品牌系統。</p>
+          <span class="product-read-more">閱讀更多</span>
         </div>
       </div>
 
-      <div class="product-card reveal reveal-delay-4">
-        <div class="product-img">
-          <img src="product4.jpg" alt="品牌識別系統" style="object-fit:cover; transform:scale(1.1); transform-origin:center;">
-        </div>
+      <div class="product-card reveal reveal-delay-4" onclick="openModal('product',3)">
+        <div class="product-img"><img src="product4.jpg" alt="品牌識別" style="object-fit:cover;transform:scale(1.1);transform-origin:center;"><div class="img-ph">品牌識別</div></div>
         <div class="product-info">
           <div class="product-tag">Brand Identity</div>
           <div class="product-name">品牌識別系統</div>
           <p class="product-desc">建立「曙森物語」品牌標誌與整體視覺語言，發展六樹神祇與象徵符號系統，形成具有一致性的視覺識別。</p>
+          <span class="product-read-more">閱讀更多</span>
         </div>
       </div>
 
@@ -895,57 +765,67 @@
   </div>
   <div class="team-grid">
     <div class="team-member reveal reveal-delay-1">
-      <div class="team-avatar">
-        <!-- 【放置照片】把 display:none 刪掉，改 src -->
-        <img src="王相威.jpg" alt="王相威" style="display:none">
-        王
-      </div>
+      <div class="team-avatar">王</div>
       <div class="team-role">組長</div>
       <div class="team-name">王相威</div>
       <div class="team-id">11118027</div>
     </div>
     <div class="team-member reveal reveal-delay-2">
-      <div class="team-avatar">
-        <img src="洪芸姍.jpg" alt="洪芸姍" style="display:none">
-        洪
-      </div>
+      <div class="team-avatar">洪</div>
       <div class="team-role">組員</div>
       <div class="team-name">洪芸姍</div>
       <div class="team-id">11118063</div>
     </div>
     <div class="team-member reveal reveal-delay-3">
-      <div class="team-avatar">
-        <img src="康佳怡.jpg" alt="康佳怡" style="display:none">
-        康
-      </div>
+      <div class="team-avatar">康</div>
       <div class="team-role">組員</div>
       <div class="team-name">康佳怡</div>
       <div class="team-id">11018153</div>
     </div>
     <div class="team-member reveal reveal-delay-4">
-      <div class="team-avatar">
-        <img src="范香江.jpg" alt="范香江" style="display:none">
-        范
-      </div>
+      <div class="team-avatar">范</div>
       <div class="team-role">組員</div>
       <div class="team-name">范香江</div>
       <div class="team-id">11018151</div>
     </div>
     <div class="team-member reveal reveal-delay-5">
-      <div class="team-avatar">
-        <img src="馮進達.jpg" alt="馮進達" style="display:none">
-        馮
-      </div>
+      <div class="team-avatar">馮</div>
       <div class="team-role">組員</div>
       <div class="team-name">馮進達</div>
       <div class="team-id">11018143</div>
     </div>
   </div>
-  <div class="reveal" style="margin-top: 60px; text-align: center;">
-    <p class="section-body" style="margin: 0 auto;">
+  <div class="reveal" style="margin-top:52px;text-align:center;">
+    <p class="section-body" style="margin:0 auto;">
       指導老師：李耀華　｜　製作類別：品牌設計<br>
       朝陽科技大學 視覺傳達設計系 日間部 第29屆
     </p>
+  </div>
+</div>
+
+<!-- Instagram / Social -->
+<div id="social">
+  <div class="social-inner">
+    <div class="social-text reveal">
+      <div class="section-label">陸 · 追蹤我們</div>
+      <h2 class="section-title">持續關注<br>曙森物語</h2>
+      <div class="gold-line"></div>
+      <p class="section-body">掃描 QR Code 或搜尋 Instagram 帳號，追蹤最新展覽動態、幕後花絮與品牌故事。</p>
+      <a class="ig-link" href="https://www.instagram.com/shusenwuyu2005" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        @SHUSENWUYU2005
+      </a>
+    </div>
+
+    <div class="social-divider-line reveal reveal-delay-1"></div>
+
+    <div class="social-qr reveal reveal-delay-2">
+      <div class="qr-frame">
+        <!-- ảnh QR code của bạn — đặt tên LINE_NOTE_260326_1.jpg cùng thư mục -->
+        <img src="LINE_NOTE_260326_1.jpg" alt="Instagram QR Code">
+      </div>
+      <div class="qr-handle">SHUSENWUYU2005</div>
+    </div>
   </div>
 </div>
 
@@ -962,68 +842,200 @@
   </div>
 </footer>
 
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-img">
+      <img id="modalImg" src="" alt="">
+      <div class="img-ph" id="modalImgPh"></div>
+    </div>
+    <div class="modal-content">
+      <div class="modal-number" id="modalNumber"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-en" id="modalEn"></div>
+      <div class="modal-divider"></div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+</div>
+
 <script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mouseX = 0, mouseY = 0;
-  let ringX = 0, ringY = 0;
-
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
-  });
-
-  function animateRing() {
-    ringX += (mouseX - ringX) * 0.12;
-    ringY += (mouseY - ringY) * 0.12;
-    ring.style.left = ringX + 'px';
-    ring.style.top = ringY + 'px';
-    requestAnimationFrame(animateRing);
+/* ── DATA ── */
+const treeData = [
+  {
+    number: 'NO.01 · 五葉松',
+    title: '方向與守望',
+    en: 'Direction & Vision',
+    img: 'tree1.jpg',
+    body: `<p>以向上分岔的線條表現五葉松挺直生長、迎風而立的姿態，如同指引方向的標記，象徵在山林中「被看見、被守望」。</p>
+    <p>五葉松原生於台灣高山地帶，樹形筆直挺立，每根枝條都朝向光源生長，象徵一種不畏逆境、始終指引方向的精神。</p>
+    <p>在曙森物語的敘事系統中，五葉松被賦予「守望者」的神格，是進入森林的第一道指引，也是迷途者找回自己位置的象徵。</p>`
+  },
+  {
+    number: 'NO.02 · 樟樹',
+    title: '記憶與時間',
+    en: 'Memory & Time',
+    img: 'tree2.jpg',
+    body: `<p>以圓弧包覆的繁複線條構成，表現樟樹濃密而富包容性的氣味記憶，如同層層堆疊的時間。</p>
+    <p>樟樹的氣味是台灣最具辨識度的森林香氣之一，能夠瞬間喚起深藏的記憶，呼應普魯斯特效應——氣味是記憶最直接的通道。</p>
+    <p>線條彼此靠近卻不重疊，象徵記憶的流動與時間的層次：過去不會消失，只是靜靜地在當下之下沉澱，等待被氣味喚醒。</p>`
+  },
+  {
+    number: 'NO.03 · 九芎',
+    title: '界線與自我',
+    en: 'Boundary & Self',
+    img: 'tree3.jpg',
+    body: `<p>運用對稱但位不相交的線條，呈現九芎樹皮光滑、不易攀附的特性，符號中保留明確間距，形成「柔軟的界線」。</p>
+    <p>九芎是台灣原生樹種，以光滑如緞的樹皮著稱，幾乎沒有任何附生植物能在其上生長，保有絕對的自我邊界。</p>
+    <p>這種界線不是冷漠，而是一種自我完整的宣示：清楚知道自己是誰，才能在與他者的接觸中保持真實。</p>`
+  },
+  {
+    number: 'NO.04 · 黃連木',
+    title: '治癒與痕跡',
+    en: 'Healing & Trace',
+    img: 'tree4.jpg',
+    body: `<p>以層實的中軸線與向外延伸的枝條，表現樹形整整如支撐結構的穩定性，讓「受傷」成為結構的一部分。</p>
+    <p>黃連木在移植過程中往往留下明顯的切口與疤痕，但這些傷口並不妨礙它繼續生長，反而成為樹體歷史的一部分。</p>
+    <p>符號設計刻意保留不完美的節點，象徵癒合不是抹去傷痕，而是讓受傷成為支撐自己繼續向前的結構力量。</p>`
+  },
+  {
+    number: 'NO.05 · 茄苳',
+    title: '守護與土地',
+    en: 'Protection & Earth',
+    img: 'tree5.jpg',
+    body: `<p>以茄苳外擴的根條，表現茄苳作為土地守護樹的穩定性，整體造型如支撐結構，給人「站得住」的視覺感受。</p>
+    <p>茄苳在台灣民間信仰中長期被視為庄頭守護神樹，巨大的板根向四方延伸，如同保護土地的雙臂。</p>
+    <p>在文淵園區，茄苳是被搶救的老樹中根系最為龐大的一棵，它重新在此紮根的過程，正是整個園區「土地修復」理念最具體的象徵。</p>`
+  },
+  {
+    number: 'NO.06 · 桃實百日青',
+    title: '重逢與連結',
+    en: 'Reunion & Bond',
+    img: 'tree6.jpg',
+    body: `<p>以兩條向內凹曲的線條構成，似兩棵樹相互擁抱，象徵兩棵移植樹根的生命交纏，形似花苞，亦似擁抱。</p>
+    <p>桃實百日青以百日常青著稱，生命力頑強，即便移植至全新的土地，也能與周圍的樹木重新建立根系連結。</p>
+    <p>這個符號代表一種深刻的相遇：兩棵各自帶著過去傷痕的老樹，在新的土地上找到彼此，重新長在一起。這是重逢，也是一種新的開始。</p>`
   }
-  animateRing();
+];
 
-  document.querySelectorAll('a, .tree-card, .product-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.width = '20px';
-      cursor.style.height = '20px';
-      ring.style.width = '60px';
-      ring.style.height = '60px';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.width = '12px';
-      cursor.style.height = '12px';
-      ring.style.width = '40px';
-      ring.style.height = '40px';
-    });
-  });
+const productData = [
+  {
+    number: 'Brand Publication',
+    title: '園區導覽手冊',
+    en: 'Guidebook Design',
+    img: 'product1.jpg',
+    body: `<p>整合園區背景介紹、老樹故事與六樹神祇象徵概念，使遊客在無導覽人員的情況下，仍能透過閱讀與圖像理解園區故事，建立自主導覽的資訊媒介。</p>
+    <p>手冊採折頁設計，展開後形成一張完整的六樹神祇全景圖；合起來則是精巧的口袋導覽冊，方便遊客在園區步行時隨身攜帶。</p>
+    <p>透過清楚的資訊階層與視覺編排，讓每一位進入園區的訪客，都能在沒有嚮導的情況下，完整感受老樹的生命故事。</p>`
+  },
+  {
+    number: 'Sensory Product',
+    title: '塔香產品禮盒',
+    en: 'Incense Gift Box',
+    img: 'product2.png',
+    body: `<p>六款對應六樹神祇意涵的塔香設計，將場域故事轉化為感官體驗媒介，使遊客在離場後仍能透過氣味喚起參訪記憶。</p>
+    <p>禮盒採抽屜式收納結構，內部規劃塔香與擴香瓶的專屬空間。開啟包裝後，產品與立體森林展示形成層次空間，視覺與香氣共同營造森林氛圍。</p>
+    <p>每款塔香的香氛配方均參考對應老樹的天然氣味特徵，以在地採集的植物原料為基礎，讓氣味本身即是一種敘事。</p>`
+  },
+  {
+    number: 'Packaging Design',
+    title: '擴香包裝設計',
+    en: 'Diffuser Packaging',
+    img: 'product3.png',
+    body: `<p>包裝視覺延續「曙森物語」品牌識別與六樹神祇角色形象，將樹神角色與植物元素融入包裝設計，使產品在視覺與概念上形成一致的品牌系統。</p>
+    <p>六款擴香分別對應六棵老樹，瓶身貼標採用與神祇插圖同系列的植物圖紋，讓每一瓶擴香都是一個獨立的故事物件。</p>
+    <p>使用者可以將擴香帶回日常生活空間，讓森林氣味在家中持續飄散，成為一個每天都能重溫文淵老樹記憶的感官入口。</p>`
+  },
+  {
+    number: 'Brand Identity',
+    title: '品牌識別系統',
+    en: 'Visual Identity System',
+    img: 'product4.jpg',
+    body: `<p>建立「曙森物語」品牌標誌與整體視覺語言，發展六樹神祇與象徵符號系統，形成具有一致性的視覺識別。</p>
+    <p>主標誌以老樹作為核心圖像，外框採拱形結構象徵進入森林敘事的門扉；上方放射狀線條呼應「曙光」意象，寓意老樹在新土地重新生長。</p>
+    <p>六樹神祇符號系統以抽象幾何線條呈現，每個符號皆可獨立使用，同時與品牌標誌維持視覺一致性，形成完整的象徵語言體系。</p>`
+  }
+];
 
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+/* ── MODAL LOGIC ── */
+function openModal(type, index) {
+  const data = type === 'tree' ? treeData[index] : productData[index];
+  const box = document.getElementById('modalBox');
 
-  reveals.forEach(el => observer.observe(el));
+  box.className = type === 'product' ? 'modal-box product-modal' : 'modal-box';
 
-  // Nav scroll effect
-  const nav = document.querySelector('nav');
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 80) {
-      nav.style.background = 'rgba(15,34,25,0.97)';
-      nav.style.backdropFilter = 'blur(12px)';
-    } else {
-      nav.style.background = 'linear-gradient(to bottom, rgba(15,34,25,0.95), transparent)';
-      nav.style.backdropFilter = 'blur(2px)';
-    }
-  });
+  const imgEl = document.getElementById('modalImg');
+  imgEl.src = data.img;
+  imgEl.alt = data.title;
+
+  document.getElementById('modalImgPh').textContent = data.title;
+  document.getElementById('modalNumber').textContent = data.number;
+  document.getElementById('modalTitle').textContent = data.title;
+  document.getElementById('modalEn').textContent = data.en;
+  document.getElementById('modalBody').innerHTML = data.body;
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ── MOBILE MENU ── */
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('mobileMenu').classList.add('open');
+  document.body.style.overflow = 'hidden';
+});
+document.getElementById('mobileClose').addEventListener('click', closeMobileMenu);
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+});
+(function animRing() {
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a, .tree-card, .product-card, .modal-close').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width='20px'; cursor.style.height='20px'; ring.style.width='60px'; ring.style.height='60px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width='12px'; cursor.style.height='12px'; ring.style.width='40px'; ring.style.height='40px'; });
+});
+
+/* ── SCROLL REVEAL ── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ── NAV SCROLL ── */
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 80) {
+    nav.style.background = 'rgba(15,34,25,0.97)';
+    nav.style.backdropFilter = 'blur(12px)';
+  } else {
+    nav.style.background = 'linear-gradient(to bottom, rgba(15,34,25,0.95), transparent)';
+    nav.style.backdropFilter = 'blur(2px)';
+  }
+}, { passive: true });
 </script>
-
 </body>
 </html>
